@@ -13,6 +13,7 @@ Note: this was fully vibe coded — expect rough edges.
 - **Claude Code Integration**
   - Highlight lines in the editor or preview gutter, attach a comment, and send it straight to a Claude Code terminal session.
   - Queue up multiple comments across files and submit them to Claude all at once as a revision batch.
+  - Uses regular Claude Code CLI — works with your existing subscription, skills, plugins, agents, etc.
 - **Live Preview & Split View** — See rendered markdown side-by-side as you type, with full GitHub Flavored Markdown and Mermaid diagram support.
 - **Integrated Terminal** — Drop into a full terminal without leaving the app. Run Claude Code, git, or any shell command. Supports multiple terminal tabs.
 - **File Tree Browser** — Open any directory and navigate your markdown files in a sidebar tree.
