@@ -1,0 +1,228 @@
+.search-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.search-panel-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-back-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  margin-bottom: 4px;
+}
+
+.search-back-btn:hover {
+  background-color: var(--bg-secondary);
+  color: var(--accent-color);
+}
+
+.search-input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-input:focus {
+    box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.1);
+  }
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear-btn:hover {
+  color: var(--text-primary);
+}
+
+.regex-toggle {
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.regex-toggle:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--text-secondary);
+}
+
+.regex-toggle.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.search-panel-info {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.search-status {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.search-results-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.search-results {
+  padding: 0;
+}
+
+.search-result-file {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.search-result-file-header {
+  padding: 8px 12px;
+  background-color: var(--bg-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-word;
+  border-bottom: 1px solid var(--border-color);
+  user-select: none;
+}
+
+.search-result-matches {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-match {
+  display: flex;
+  align-items: flex-start;
+  padding: 6px 0;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background-color 0.15s ease, border-left-color 0.15s ease;
+}
+
+.search-result-match:hover {
+  background-color: var(--bg-secondary);
+  border-left-color: var(--accent-color);
+}
+
+.match-line-number {
+  min-width: 40px;
+  padding: 0 8px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  text-align: right;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.match-text-container {
+  flex: 1;
+  min-width: 0;
+  padding-right: 8px;
+}
+
+.match-text {
+  display: block;
+  font-size: 12px;
+  font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.4;
+  max-height: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.match-highlight {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0 2px;
+  border-radius: 2px;
+  font-weight: 500;
+  margin: 0 1px;
+}
+
+.search-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Scrollbar styling for search results */
+.search-results-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-results-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.search-results-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.search-results-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}

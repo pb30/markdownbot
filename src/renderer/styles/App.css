@@ -1,0 +1,73 @@
+.app-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.main-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Sidebar — drag region for frameless titlebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  max-width: 600px;
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+  padding-top: 38px; /* Space for macOS traffic lights */
+  border-right: 1px solid var(--border-color);
+  -webkit-app-region: drag;
+}
+
+.sidebar * {
+  -webkit-app-region: no-drag;
+}
+
+/* Main area — editor + terminal */
+.main-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  background-color: var(--editor-bg);
+}
+
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--editor-bg);
+}
+
+.empty-editor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  background-color: var(--editor-bg);
+}
+
+.terminal-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+  max-height: calc(100% - 100px);
+  overflow: hidden;
+  background-color: var(--terminal-bg);
+  border-top: 1px solid var(--border-color);
+}

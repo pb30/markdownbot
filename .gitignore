@@ -1,0 +1,22 @@
+node_modules/
+out/
+build/
+dist/
+dist2/
+mock-data/
+*.js.map
+*.d.ts
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env
+.env
+.env.*

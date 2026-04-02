@@ -1,0 +1,107 @@
+.quick-open-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  padding-top: 80px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .quick-open-overlay {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.quick-open-modal {
+  width: 520px;
+  max-height: 400px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+}
+
+@media (prefers-color-scheme: dark) {
+  .quick-open-modal {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.quick-open-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  font-family: inherit;
+}
+
+.quick-open-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.quick-open-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.quick-open-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.06s ease;
+}
+
+.quick-open-item:hover,
+.quick-open-item.selected {
+  background: var(--bg-tertiary);
+}
+
+.quick-open-item.selected {
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+}
+
+.quick-open-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.quick-open-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.quick-open-path {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-left: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  text-align: right;
+}
+
+.quick-open-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}

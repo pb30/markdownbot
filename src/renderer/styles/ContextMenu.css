@@ -1,0 +1,28 @@
+.context-menu {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.context-menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: background-color 0.1s ease;
+  white-space: nowrap;
+}
+
+.context-menu-item:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--accent-color);
+}
+
+.context-menu-item:active {
+  background-color: var(--accent-color);
+  color: white;
+}

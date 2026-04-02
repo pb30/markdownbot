@@ -1,0 +1,231 @@
+.file-tree {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Header */
+.file-tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: 36px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.file-tree-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.file-tree-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.icon-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Filter input */
+.file-tree-filter {
+  padding: 6px 8px;
+  flex-shrink: 0;
+}
+
+.file-tree-filter input {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.file-tree-filter input:focus {
+  border-color: var(--accent-color);
+}
+
+.file-tree-filter input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Tree content */
+.file-tree-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 0;
+}
+
+.tree-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+/* Tree nodes */
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding-right: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: background-color 0.08s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.tree-node:hover {
+  background: var(--bg-tertiary);
+}
+
+.tree-node.active {
+  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+}
+
+.tree-node.active .node-name {
+  font-weight: 500;
+}
+
+/* Directory style */
+.tree-node.directory .node-name {
+  font-weight: 500;
+}
+
+/* Chevron */
+.chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: transform 0.15s ease;
+}
+
+.chevron.expanded {
+  transform: rotate(90deg);
+}
+
+.chevron-spacer {
+  width: 16px;
+  flex-shrink: 0;
+}
+
+/* Icon */
+.node-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  line-height: 1;
+  color: var(--text-secondary);
+}
+
+.node-icon .icon-folder {
+  color: #e0a526;
+}
+
+.node-icon .icon-file-md {
+  color: var(--accent-color);
+}
+
+.node-icon .icon-file {
+  color: var(--text-tertiary);
+}
+
+/* Name */
+.node-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-children {
+  /* No extra styling needed — indentation handled by paddingLeft */
+}
+
+/* Context Menu */
+.context-menu {
+  position: fixed;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  min-width: 160px;
+  padding: 4px;
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  .context-menu {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-radius: 4px;
+  transition: background-color 0.08s ease;
+}
+
+.context-menu-item:hover {
+  background: var(--accent-color);
+  color: white;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+/* Git status coloring */
+.node-name.git-modified {
+  color: #4a9eff;
+}
+
+.node-name.git-new {
+  color: #4ec44e;
+}
+
+/* Git colors always take precedence, even on active items */
