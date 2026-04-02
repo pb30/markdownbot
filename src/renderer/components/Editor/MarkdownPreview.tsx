@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
@@ -75,11 +75,49 @@ const sourceLineComponents = {
   h5: withSourceLines('h5'),
   h6: withSourceLines('h6'),
   blockquote: withSourceLines('blockquote'),
-  ul: withSourceLines('ul'),
-  ol: withSourceLines('ol'),
   li: withSourceLines('li'),
   pre: withSourceLines('pre'),
   table: withSourceLines('table'),
+}
+
+type LineMapping = { sourceLine: number; sourceEndLine: number; top: number; height: number }
+
+function findSourceLineAtY(y: number, mappings: LineMapping[], totalLines: number): number {
+  if (mappings.length === 0) return 1
+
+  // Before first element
+  if (y < mappings[0].top) return 1
+
+  // Binary search for element containing y
+  let lo = 0, hi = mappings.length - 1
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1
+    const m = mappings[mid]
+    if (y < m.top) {
+      hi = mid - 1
+    } else if (y >= m.top + m.height) {
+      lo = mid + 1
+    } else {
+      // y is within this element — for nested elements (e.g. li inside ul),
+      // check if a later entry with a smaller height also contains y
+      let best = mid
+      for (let i = mid + 1; i < mappings.length && mappings[i].top <= y; i++) {
+        if (y < mappings[i].top + mappings[i].height && mappings[i].height < mappings[best].height) {
+          best = i
+        }
+      }
+      return mappings[best].sourceLine
+    }
+  }
+
+  // y fell in a gap between elements — return the preceding element's end line + 1
+  // (capped at totalLines)
+  if (hi >= 0 && hi < mappings.length) {
+    return Math.min(mappings[hi].sourceEndLine + 1, totalLines)
+  }
+
+  // After last element
+  return totalLines
 }
 
 export default function MarkdownPreview({ content, onRequestComment, onLinkClick, commentVisible }: MarkdownPreviewProps) {
@@ -90,6 +128,38 @@ export default function MarkdownPreview({ content, onRequestComment, onLinkClick
   lineCountRef.current = lineCount
   const [gutterSelection, setGutterSelection] = useState<{ startLine: number; endLine: number } | null>(null)
   const gutterDragRef = useRef<{ startLine: number; active: boolean }>({ startLine: 0, active: false })
+  const lineMappingsRef = useRef<LineMapping[]>([])
+  const [gutterHeight, setGutterHeight] = useState(0)
+  const [hoverY, setHoverY] = useState<number | null>(null)
+
+  // Build source-line position map after each render
+  useLayoutEffect(() => {
+    const container = previewRef.current
+    if (!container) return
+
+    const elements = container.querySelectorAll('[data-source-line]')
+    const containerTop = container.getBoundingClientRect().top
+    const scrollTop = container.scrollTop
+    const mappings: LineMapping[] = []
+
+    elements.forEach((el) => {
+      const sourceLine = parseInt(el.getAttribute('data-source-line') || '0', 10)
+      const sourceEndLine = parseInt(el.getAttribute('data-source-end-line') || '0', 10)
+      if (!sourceLine) return
+      const rect = el.getBoundingClientRect()
+      mappings.push({
+        sourceLine,
+        sourceEndLine: sourceEndLine || sourceLine,
+        top: rect.top - containerTop + scrollTop,
+        height: rect.height,
+      })
+    })
+
+    // Sort by top position
+    mappings.sort((a, b) => a.top - b.top || a.sourceLine - b.sourceLine)
+    lineMappingsRef.current = mappings
+    setGutterHeight(container.scrollHeight)
+  }, [content])
 
   // Sync gutter scroll with preview scroll
   useEffect(() => {
@@ -104,21 +174,31 @@ export default function MarkdownPreview({ content, onRequestComment, onLinkClick
     return () => preview.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Compute source line from mouse Y relative to preview content
+  const getLineFromMouseEvent = useCallback((e: MouseEvent) => {
+    const gutter = gutterRef.current
+    if (!gutter) return 1
+    const gutterRect = gutter.getBoundingClientRect()
+    const y = e.clientY - gutterRect.top + gutter.scrollTop
+    return findSourceLineAtY(y, lineMappingsRef.current, lineCountRef.current)
+  }, [])
+
   // Gutter mouse handlers for click/drag
-  const handleGutterMouseDown = useCallback((lineNum: number, e: React.MouseEvent) => {
+  const handleGutterMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
+    const gutter = gutterRef.current
+    if (!gutter) return
+    const gutterRect = gutter.getBoundingClientRect()
+    const y = e.clientY - gutterRect.top + gutter.scrollTop
+    const lineNum = findSourceLineAtY(y, lineMappingsRef.current, lineCountRef.current)
     gutterDragRef.current = { startLine: lineNum, active: true }
     setGutterSelection({ startLine: lineNum, endLine: lineNum })
   }, [])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!gutterDragRef.current.active || !gutterRef.current) return
-      const gutterRect = gutterRef.current.getBoundingClientRect()
-      const lineHeight = 22
-      const scrollOffset = gutterRef.current.scrollTop
-      const y = e.clientY - gutterRect.top + scrollOffset
-      const lineNum = Math.max(1, Math.min(lineCountRef.current, Math.ceil(y / lineHeight)))
+      if (!gutterDragRef.current.active) return
+      const lineNum = getLineFromMouseEvent(e)
       const start = gutterDragRef.current.startLine
       setGutterSelection({ startLine: Math.min(start, lineNum), endLine: Math.max(start, lineNum) })
     }
@@ -135,7 +215,6 @@ export default function MarkdownPreview({ content, onRequestComment, onLinkClick
         const gutterRight = gutterEl ? gutterEl.getBoundingClientRect().right + 8 : e.clientX
         onRequestComment(sel.startLine, sel.endLine, { x: gutterRight, y: e.clientY })
       }
-      // Don't clear gutterSelection here — it stays visible while comment box is open
     }
 
     document.addEventListener('mousemove', handleMouseMove)
@@ -144,7 +223,7 @@ export default function MarkdownPreview({ content, onRequestComment, onLinkClick
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [onRequestComment])
+  }, [onRequestComment, getLineFromMouseEvent])
 
   // Keep a ref to gutterSelection so mouseup handler can read latest value
   const gutterSelectionRef = useRef(gutterSelection)
@@ -199,25 +278,97 @@ export default function MarkdownPreview({ content, onRequestComment, onLinkClick
     },
   }), [onLinkClick])
 
-  const selFrom = gutterSelection ? gutterSelection.startLine : -1
-  const selTo = gutterSelection ? gutterSelection.endLine : -1
+  // Compute highlight overlay position from selection line range
+  const selectionOverlay = React.useMemo(() => {
+    if (!gutterSelection) return null
+    const mappings = lineMappingsRef.current
+    if (mappings.length === 0) return null
+
+    // Find top of startLine
+    let top: number | null = null
+    let bottom: number | null = null
+    for (const m of mappings) {
+      if (m.sourceLine <= gutterSelection.startLine && m.sourceEndLine >= gutterSelection.startLine) {
+        top = m.top
+        break
+      }
+      if (m.sourceLine > gutterSelection.startLine) {
+        top = m.top
+        break
+      }
+    }
+    for (let i = mappings.length - 1; i >= 0; i--) {
+      const m = mappings[i]
+      if (m.sourceLine <= gutterSelection.endLine && m.sourceEndLine >= gutterSelection.endLine) {
+        bottom = m.top + m.height
+        break
+      }
+      if (m.sourceLine < gutterSelection.endLine) {
+        bottom = m.top + m.height
+        break
+      }
+    }
+
+    if (top == null) top = 0
+    if (bottom == null) bottom = top + 22
+
+    return { top, height: Math.max(bottom - top, 4) }
+  }, [gutterSelection])
+
+  // Handle gutter hover for + icon
+  const handleGutterMouseMove = useCallback((e: React.MouseEvent) => {
+    if (gutterDragRef.current.active) return
+    const gutter = gutterRef.current
+    if (!gutter) return
+    const gutterRect = gutter.getBoundingClientRect()
+    setHoverY(e.clientY - gutterRect.top + gutter.scrollTop)
+  }, [])
+
+  const handleGutterMouseLeave = useCallback(() => {
+    if (!gutterDragRef.current.active) {
+      setHoverY(null)
+    }
+  }, [])
+
+  // Find the most specific element bounds at hoverY for + icon positioning
+  const hoverIndicator = React.useMemo(() => {
+    if (hoverY == null) return null
+    const mappings = lineMappingsRef.current
+    if (mappings.length === 0) return null
+
+    let best: LineMapping | null = null
+    for (const m of mappings) {
+      if (hoverY >= m.top && hoverY < m.top + m.height) {
+        if (!best || m.height < best.height) best = m
+      }
+    }
+    return best ? { top: best.top, height: best.height } : null
+  }, [hoverY])
 
   return (
     <div className="markdown-preview-wrapper">
-      <div ref={gutterRef} className="preview-gutter">
-        {Array.from({ length: lineCount }, (_, i) => {
-          const lineNum = i + 1
-          const isSelected = gutterSelection && lineNum >= selFrom && lineNum <= selTo
-          return (
-            <div
-              key={lineNum}
-              className={`preview-gutter-line ${isSelected ? 'selected' : ''}`}
-              onMouseDown={(e) => handleGutterMouseDown(lineNum, e)}
-            >
-              <span className="preview-gutter-plus">+</span>
-            </div>
-          )
-        })}
+      <div
+        ref={gutterRef}
+        className="preview-gutter"
+        onMouseDown={handleGutterMouseDown}
+        onMouseMove={handleGutterMouseMove}
+        onMouseLeave={handleGutterMouseLeave}
+      >
+        <div className="preview-gutter-spacer" style={{ height: gutterHeight }} />
+        {selectionOverlay && (
+          <div
+            className="preview-gutter-highlight"
+            style={{ top: selectionOverlay.top, height: selectionOverlay.height }}
+          />
+        )}
+        {hoverIndicator && !gutterSelection && (
+          <div
+            className="preview-gutter-hover"
+            style={{ top: hoverIndicator.top, height: hoverIndicator.height }}
+          >
+            <span className="preview-gutter-plus">+</span>
+          </div>
+        )}
       </div>
       <div ref={previewRef} className="markdown-preview">
         <ReactMarkdown

@@ -362,39 +362,37 @@
   border-right: 1px solid var(--border-color);
   user-select: none;
   flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
 }
 
-.preview-gutter-line {
-  height: 22px;
+.preview-gutter-spacer {
+  width: 100%;
+}
+
+.preview-gutter-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+  box-shadow: inset -3px 0 0 var(--accent-color);
+  pointer-events: none;
+}
+
+.preview-gutter-hover {
+  position: absolute;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.08s ease;
-}
-
-.preview-gutter-line:hover {
   background: color-mix(in srgb, var(--accent-color) 8%, transparent);
-}
-
-.preview-gutter-line.selected {
-  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
-  box-shadow: inset -3px 0 0 var(--accent-color);
+  pointer-events: none;
 }
 
 .preview-gutter-plus {
   font-size: 14px;
   font-weight: 700;
-  color: transparent;
-  line-height: 1;
-  transition: color 0.1s ease;
-}
-
-.preview-gutter-line:hover .preview-gutter-plus {
   color: var(--accent-color);
-}
-
-/* Hide the '+' on selected lines so only the color bar shows */
-.preview-gutter-line.selected .preview-gutter-plus {
-  color: transparent !important;
+  line-height: 1;
 }
