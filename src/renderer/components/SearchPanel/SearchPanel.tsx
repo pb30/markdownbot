@@ -4,20 +4,13 @@ import '../../styles/SearchPanel.css'
 
 const api = (window as any).api
 
-interface GroupedResults {
-  [filePath: string]: {
-    fileName: string
-    matches: SearchMatch[]
-  }
-}
-
 export default function SearchPanel() {
   const { rootDir, openTab, toggleSearchPanel } = useEditorStore()
   const [query, setQuery] = useState('')
   const [isRegex, setIsRegex] = useState(false)
   const [results, setResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const performSearch = useCallback(
     async (searchQuery: string, useRegex: boolean) => {

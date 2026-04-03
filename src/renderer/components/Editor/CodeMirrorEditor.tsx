@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { EditorState, StateField, StateEffect, RangeSetBuilder } from '@codemirror/state'
-import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, drawSelection, highlightActiveLine, Decoration, gutter, GutterMarker, ViewPlugin, ViewUpdate } from '@codemirror/view'
+import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, drawSelection, highlightActiveLine, Decoration, gutter, GutterMarker } from '@codemirror/view'
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
 import { languages } from '@codemirror/language-data'
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands'

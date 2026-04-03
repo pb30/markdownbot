@@ -135,14 +135,15 @@ export default function Terminal() {
   // that's managed by TerminalManager and cleaned up on app quit).
   // This is critical for React 18 StrictMode which double-mounts in dev.
   useEffect(() => {
+    const terminals = terminalsRef.current
     return () => {
-      terminalsRef.current.forEach((instance) => {
+      terminals.forEach((instance) => {
         instance.cleanups.forEach((fn) => fn())
         instance.terminal.dispose()
         // Do NOT call api.disposeTerminal here — StrictMode unmount/remount
         // would kill the backend pty, causing SIGHUP on the first terminal.
       })
-      terminalsRef.current.clear()
+      terminals.clear()
     }
   }, [])
 

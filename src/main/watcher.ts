@@ -19,7 +19,7 @@ export class FileWatcher {
     this.watchPath = dirPath;
 
     this.watcher = chokidar.watch(dirPath, {
-      ignored: [/(^|[\/\\])\.|node_modules|\.git/],
+      ignored: [/(^|[/\\])\.|node_modules|\.git/],
       persistent: true,
       ignoreInitial: true,
       awaitWriteFinish: {
@@ -60,7 +60,7 @@ export class FileWatcher {
       this.webContents.send('watcher:treeChanged');
     });
 
-    this.watcher.on('error', (error: Error) => {
+    this.watcher.on('error', (error: unknown) => {
       console.error('Watcher error:', error);
     });
   }

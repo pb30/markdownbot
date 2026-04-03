@@ -250,7 +250,7 @@ export default function MarkdownPreview({ content, onRequestComment, onLinkClick
 
   const annotatedComponents: any = React.useMemo(() => ({
     ...sourceLineComponents,
-    a: ({ node, href, children, ...props }: any) => (
+    a: ({ node: _node, href, children, ...props }: any) => (
       <a
         {...props}
         href={href}
@@ -261,7 +261,7 @@ export default function MarkdownPreview({ content, onRequestComment, onLinkClick
         {children}
       </a>
     ),
-    code: ({ node, className, children, ...props }: any) => {
+    code: ({ node: _node, className, children, ...props }: any) => {
       const match = /language-(\w+)/.exec(className || '')
       const lang = match ? match[1] : ''
 

@@ -6,6 +6,8 @@ dist2/
 mock-data/
 *.js.map
 *.d.ts
+!src/**/*.d.ts
+*.tsbuildinfo
 
 # OS
 .DS_Store
@@ -16,6 +18,9 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Electron-vite temp build artifacts
+electron.vite.config.*.mjs
 
 # Env
 .env

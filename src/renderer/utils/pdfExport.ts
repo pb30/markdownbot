@@ -184,10 +184,10 @@ function renderMarkdownToHtml(markdownContent: string): string {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypeHighlight],
     components: {
-      a: ({ node, ...props }) => {
+      a: ({ node: _node, ...props }) => {
         return React.createElement('a', { ...props, target: '_blank', rel: 'noopener noreferrer' })
       },
-      code: ({ node, className, children, ...props }) => {
+      code: ({ node: _node, className, children, ...props }) => {
         const match = /language-(\w+)/.exec(className || '')
         const lang = match ? match[1] : ''
 
